@@ -45,3 +45,11 @@ Pro akceleraci výpočtů na grafické kartě (výrazně urychlí úlohy s konvo
   - Validační skóre > 30 %: 2 body
   - Validační skóre > 40 %: 4 body
 - **deadline: 25.3.2019 7:59**
+
+### 3. Úvod do konvoluce
+- Notebook: [conv-intro.ipynb](conv-intro.ipynb)
+- Bodování:
+  - konvoluce po kanálech: 2 body
+  - více filtrů najednou: 3 body
+  - konvoluce jako vrstva: 5 bodů
+- **deadline: 14.4.2019 7:59**
