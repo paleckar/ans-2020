@@ -34,7 +34,7 @@ Pro akceleraci výpočtů na grafické kartě (výrazně urychlí úlohy s konvo
     - Validační skóre > 30 %: +1 bod
   - SVM: 3 body
     - Validační skóre > 30 %: +1 bod
-- **deadline: 18.3.2019 7:59**
+- **deadline: 18.3.2020 7:59**
   
 ### 2. Vícevrstvý perceptron
 - Notebook: [multilayer-perceptron.ipynb](multilayer-perceptron.ipynb)
@@ -44,7 +44,7 @@ Pro akceleraci výpočtů na grafické kartě (výrazně urychlí úlohy s konvo
   - Validační skóre < 20 %: 0 bodů
   - Validační skóre > 30 %: 2 body
   - Validační skóre > 40 %: 4 body
-- **deadline: 25.3.2019 7:59**
+- **deadline: 25.3.2020 7:59**
 
 ### BONUS: Vícevrstvý perceptron
 - Notebook: [multilayer-perceptron.ipynb](multilayer-perceptron.ipynb)
@@ -59,4 +59,4 @@ Pro akceleraci výpočtů na grafické kartě (výrazně urychlí úlohy s konvo
   - konvoluce po kanálech: 2 body
   - více filtrů najednou: 3 body
   - konvoluce jako vrstva: 5 bodů
-- **deadline: 14.4.2019 7:59**
+- **deadline: 15.4.2020 7:59**
