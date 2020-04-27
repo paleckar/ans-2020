@@ -46,6 +46,13 @@ Pro akceleraci výpočtů na grafické kartě (výrazně urychlí úlohy s konvo
   - Validační skóre > 40 %: 4 body
 - **deadline: 25.3.2019 7:59**
 
+### BONUS: Vícevrstvý perceptron
+- Notebook: [multilayer-perceptron.ipynb](multilayer-perceptron.ipynb)
+- Úkolem je rozšířit notebook o implementaci konfigurovatelného modelu s libovolným počtem vrstev.
+- Bodování:
+  - Obecná feed-forward síť: 6 bodů
+  - Skóre > 50 %: 4 body
+
 ### 3. Úvod do konvoluce
 - Notebook: [conv-intro.ipynb](conv-intro.ipynb)
 - Bodování:
