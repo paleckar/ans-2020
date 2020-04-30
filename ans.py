@@ -12,6 +12,7 @@ class Layer(object):
     def __init__(self):
         super().__init__()
         self.params = {}
+        self.training = True
         self._cache = None
     
     def forward(self, *args, **kwargs):
@@ -19,6 +20,15 @@ class Layer(object):
     
     def backward(self, *args, **kwargs):
         raise NotImplementedError
+
+    def parameters(self):
+        return (par for name, par in self.params.items())
+    
+    def train(self):
+        self.training = True
+    
+    def eval(self):
+        self.training = False
 
     def __call__(self, *args, **kwargs):
         return self.forward(*args, **kwargs)
@@ -216,7 +226,7 @@ class Stats(object):
         self._plot(xdata, yleft, yright, ax=ax, xlabel='epoch', ylabels=subsets)
 
 
-def train(model, crit, loader, optimizer, stats):
+def train(model, crit, loader, optimizer, stats, subset_name='train'):
     """
     Trenovani dopredneho modelu metodou minibatch SGD
     
@@ -228,7 +238,7 @@ def train(model, crit, loader, optimizer, stats):
         stats     ... objekt typu `ans.Stats`
     """
     
-    pb = tqdm(loader, desc='epoch {:02d} {}'.format(len(stats), loader.subset_name))
+    pb = tqdm(loader, desc='epoch {:02d} {}'.format(len(stats), subset_name))
     for X_batch, y_batch in pb:  
         
         # dopredny pruchod
@@ -248,14 +258,14 @@ def train(model, crit, loader, optimizer, stats):
         _, pred = score.max(dim=1)
         acc = torch.sum(pred == y_batch).float() / X_batch.shape[0]
         
-        stats.append_batch_stats(loader.subset_name, loss=float(loss), acc=float(acc))
+        stats.append_batch_stats(subset_name, loss=float(loss), acc=float(acc))
         pb.set_postfix(
-            loss='{:.3f}'.format(stats.ravg(loader.subset_name, 'loss')),
-            acc='{:.3f}'.format(stats.ravg(loader.subset_name, 'acc'))
+            loss='{:.3f}'.format(stats.ravg(subset_name, 'loss')),
+            acc='{:.3f}'.format(stats.ravg(subset_name, 'acc'))
         ) 
 
 
-def validate(model, crit, loader, stats):
+def validate(model, crit, loader, stats, subset_name='valid'):
     """
     Validace modelu
     
@@ -264,9 +274,14 @@ def validate(model, crit, loader, stats):
         crit      ... kriterium, vraci loss (skalar); musi byt objekt implementujici metody `forward` a `backward`
         loader ... objekt tridy `ans.BatchSampler`, ktery prochazi data po davkach
     """
+
+    model.eval()
+    device = next(model.parameters()).device
     
-    pb = tqdm(loader, desc='epoch {:02d} {}'.format(len(stats), loader.subset_name))
+    pb = tqdm(loader, desc='epoch {:02d} {}'.format(len(stats), subset_name))
     for X_batch, y_batch in pb:
+        # zajistit, aby model i data byla na stejnem zarizeni (cpu vs gpu)
+        X_batch, y_batch = X_batch.to(device), y_batch.to(device)
 
         # dopredny pruchod
         score = model.forward(X_batch)
@@ -278,10 +293,10 @@ def validate(model, crit, loader, stats):
         _, pred = score.max(dim=1)
         acc = torch.sum(pred == y_batch).float() / X_batch.shape[0]
         
-        stats.append_batch_stats(loader.subset_name, loss=float(loss), acc=float(acc))
+        stats.append_batch_stats(subset_name, loss=float(loss), acc=float(acc))
         pb.set_postfix(
-            loss='{:.3f}'.format(stats.ravg(loader.subset_name, 'loss')),
-            acc='{:.3f}'.format(stats.ravg(loader.subset_name, 'acc'))
+            loss='{:.3f}'.format(stats.ravg(subset_name, 'loss')),
+            acc='{:.3f}'.format(stats.ravg(subset_name, 'acc'))
         )
 
 
@@ -361,3 +376,42 @@ def check_gradients(model: Layer, inputs, doutputs, input_names=None, h=None):
     
     return grads, grads_num
 
+
+def predict_and_show(rgb, model, transform, classes=None):
+    """
+    vstupy:
+        rgb ... numpy.ndarray formatu vyska x sirka x kanaly a typu np.uint8
+        model ... objekt typu nn.Module
+        transform ... predzpracovani obrazku, ktere provede pred pruchodem siti
+        classes ... seznam trid, bude `None` nebo `list` stejne dlouhy jako pocet vystupnich skore `model`u
+    """
+    # prepnout model do testovaciho rezimu
+    model.eval()
+    
+    # prevod do torch
+    x = transform(rgb)
+    x = x.to(next(model.parameters()).device)
+    x = x[None]
+    
+    # dopredny pruchod
+    score = model(x)
+    prob = F.softmax(score, dim=1)
+    
+    # prevod do numpy
+    score = score.detach().cpu().numpy().squeeze()
+    prob = prob.detach().cpu().numpy().squeeze()
+
+    # tridy
+    if classes is None:
+        classes = [str(i) for i in range(prob.shape[0])]
+    
+    # vykresleni matplotlib
+    plt.figure(figsize=(5, 5))
+    plt.imshow(np.array(rgb))
+    ids = np.argsort(-score)
+    for i, ci in enumerate(ids[:10]):
+        text = '{:>5.2f} %  {}'.format(100. * prob[ci], classes[ci])
+        if len(text) > 40:
+            text = text[:40] + '...'
+        plt.gcf().text(1., 0.8 - 0.075 * i, text, fontsize=24)
+    plt.subplots_adjust()
