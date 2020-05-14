@@ -52,6 +52,7 @@ Pro akceleraci výpočtů na grafické kartě (výrazně urychlí úlohy s konvo
 - Bodování:
   - Obecná feed-forward síť: 6 bodů
   - Skóre > 50 %: 4 body
+- **deadline: 1.7.2020 7:59**
 
 ### 3. Úvod do konvoluce
 - Notebook: [conv-intro.ipynb](conv-intro.ipynb)
@@ -86,4 +87,12 @@ Pro akceleraci výpočtů na grafické kartě (výrazně urychlí úlohy s konvo
     - Více než 99 % `predict_and_show`: +1 bod
   - Původní rozlišení, MSE < 1: 3 body
     - Více než 99 % `predict_and_show`: +1 bod
+- **deadline: 1.7.2020 7:59**
+
+### BONUS: Transfer stylu
+- Notebook: [neural-style.ipynb](neural-style.ipynb)
+- Bodování:
+  - Funkční rekonstrukce obsahu: +2 body
+  - Funkční rekonstrukce stylu: +3 body
+  - Funkční přenos stylu: +5 bodů
 - **deadline: 1.7.2020 7:59**
